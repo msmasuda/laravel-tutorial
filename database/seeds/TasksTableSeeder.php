@@ -18,7 +18,7 @@ class TasksTableSeeder extends Seeder
                 'folder_id' => 1,
                 'title' => "サンプルタスク {$num}",
                 'status' => $num,
-                'due_date' => Carbon::now()->addDay($num),
+                'due_date' => Carbon::now()->addDay($num)->format('Y/m/d'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
