@@ -54,9 +54,9 @@ class Task extends Model
      * 整形した期限日
      * @return string
      */
-    public function getFormattedDueDateAttribute()
-    {
-        return Carbon::createFromFormat('Y-m-d H:m:s', $this->attributes['due_date'])
-            ->format('Y/m/d');
-    }
+    // public function getFormattedDueDateAttribute()
+    // {
+    //     return Carbon::createFromFormat('Y-m-d H:m:s', $this->attributes['due_date'])
+    //         ->format('Y/m/d');
+    // }
 }
