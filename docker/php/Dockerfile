@@ -1,35 +1,27 @@
-FROM php:7.3-fpm-alpine
-# LABEL maintainer "ucan"
+FROM php:7.2-fpm
 
-# tinker(psysh)
-# ARG PSYSH_DIR=/usr/local/share/psysh
-# ARG PHP_MANUAL_URL=http://psysh.org/manual/ja/php_manual.sqlite
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
-# timezone
-ARG TZ
+RUN apt-get update && apt-get install -y \
+   vim \
+   zip \
+   unzip \
+   iputils-ping \
+   git
+RUN docker-php-ext-install mbstring pdo_mysql
 
-# composer
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+    
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
+ENV PATH $PATH:/composer/vendor/bin
 
-RUN set -eux && \
-  apk update && \
-  apk add --update --no-cache --virtual=.build-dependencies \
-    autoconf \
-    gcc \
-    g++ \
-    make \
-    tzdata && \
-  apk add --update --no-cache \
-    icu-dev \
-    libzip-dev && \
-  cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
-  echo ${TZ} > /etc/timezone && \
-  pecl install xdebug && \
-  apk del .build-dependencies && \
-  docker-php-ext-install intl pdo_mysql mbstring zip bcmath && \
-  docker-php-ext-enable xdebug && \
-  # mkdir $PSYSH_DIR && wget $PHP_MANUAL_URL -P $PSYSH_DIR && \
-  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
-  composer config -g repos.packagist composer https://packagist.jp && \
-  composer global require hirak/prestissimo
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs
+
+WORKDIR /var/www/html
